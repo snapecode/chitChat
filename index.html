@@ -3,7 +3,7 @@
 <head>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
@@ -18,11 +18,17 @@
         <h1 class="display-4"> Send Message</h1>
 
     <br>
-    <input class="form-control" placeholder="Name">
-    <br>
+    <input id="name" class="form-control" placeholder="Name">
+        <br>
+        <textarea id="message" class="form-control" placeholder="Message">
+        </textarea>
+        <br>
     <button id="send" class="btn btn-success"> Send</button>
     </div>
+    <br>
     <div id="messages">
+
+
 
     </div>
 
@@ -30,10 +36,12 @@
 <script>
     $(() =>{
         $("#send").click(() =>{
-            addMessages({name: 'Stevie', message: 'Saauuuu Duuuu was happenning'})
+            var message = { name: $("#name").val(), message: $("#message").val()}
+            postMessage(message)
             //Using Jq to access the send button to bind to click action
         })
 
+        getMessages()
 
     })
 
@@ -41,6 +49,18 @@
         $("#messages").append(`<h4> ${message.name} </h4>  <p> ${message.message} </p>`)
         //Javascript template literals allow us to inject variables into strings
     }
+
+
+    function getMessages() {
+        $.get('http://localhost:3005/messages', (data) => {
+            data.forEach(addMessages)
+        })
+    }
+
+    function postMessage(message) {
+        $.post('http://localhost:3005/messages', message)
+
+        }
 
 </script>
 
