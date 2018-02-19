@@ -9,7 +9,7 @@ app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-var dbURl = 'mongodb://admin:admin@ds235778.mlab.com:35778/chitchat-node'
+var dbURl = 'mongodb://admin:admin@ds235778.mlab.com:35778/chitchat-node' //config file
 
 var Message = mongoose.model('Message',{
     name: String,
@@ -42,6 +42,15 @@ app.post('/messages', (req, res) =>{
     message.save((err) => {
         if (err)
             sendStatus(500)
+        //check for bad words inside database
+        Message.findOne({message:'badword'}, (err, censored)=>{
+            if(censored){
+                console.log('censored word found', censored)
+                Message.remove({_id: censored.id}, (err)=>{
+                    console.log('removed censored message')
+                })
+            }
+        })
 
         // messages.push(req.body)
         io.emit('message', req.body)
